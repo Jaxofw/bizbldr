@@ -1,4 +1,4 @@
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit, Trash2, HandHelping } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 
 import { ServiceProps } from '@/types/blocks'
 
@@ -25,55 +32,68 @@ const ServiceTable = ({
   services,
   onEditClick,
   onDeleteClick,
-}: ServiceTableProps) => (
-  <Table>
-    <TableHeader>
-      <TableRow>
-        {headers.map((header) => (
-          <TableHead key={header}>{header}</TableHead>
-        ))}
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {services.map((service) => (
-        <TableRow key={service.id}>
-          <TableCell>
-            <div>
-              <div>{service.name}</div>
-              <div className="text-gray-500">{service.description}</div>
-            </div>
-          </TableCell>
-          <TableCell>${service.price.toLocaleString()}</TableCell>
-          <TableCell>{service.duration}</TableCell>
-          <TableCell>
-            <Badge
-              variant={service.status === 'active' ? 'default' : 'secondary'}
-            >
-              {service.status}
-            </Badge>
-          </TableCell>
-          <TableCell>
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onEditClick(service)}
-              >
-                <Edit className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDeleteClick(service)}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          </TableCell>
+}: ServiceTableProps) =>
+  services.length > 0 ? (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {headers.map((header) => (
+            <TableHead key={header}>{header}</TableHead>
+          ))}
         </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-)
+      </TableHeader>
+      <TableBody>
+        {services.map((service) => (
+          <TableRow key={service.id}>
+            <TableCell>
+              <div>
+                <div>{service.name}</div>
+                <div className="text-gray-500">{service.description}</div>
+              </div>
+            </TableCell>
+            <TableCell>${service.price.toLocaleString()}</TableCell>
+            <TableCell>{service.duration}</TableCell>
+            <TableCell>
+              <Badge
+                variant={service.status === 'active' ? 'default' : 'secondary'}
+              >
+                {service.status}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onEditClick(service)}
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDeleteClick(service)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  ) : (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <HandHelping />
+        </EmptyMedia>
+        <EmptyTitle>No services found</EmptyTitle>
+        <EmptyDescription>
+          You have not added any services yet.
+        </EmptyDescription>
+      </EmptyHeader>
+    </Empty>
+  )
 
 export default ServiceTable

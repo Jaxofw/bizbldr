@@ -76,9 +76,10 @@ const Page = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Services Overview</CardTitle>
+              <CardTitle>Services Overview - {selectedBusiness}</CardTitle>
               <CardDescription>
-                Manage and track all your service offerings
+                Manage and track all your service offerings for{' '}
+                {selectedBusiness}
               </CardDescription>
             </div>
             <Button onClick={handleCreateService}>
