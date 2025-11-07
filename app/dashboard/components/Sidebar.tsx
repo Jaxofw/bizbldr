@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { ChevronDown, HandHelping, Plus } from 'lucide-react'
+import { ChevronDown, HandHelping, Plus, Users } from 'lucide-react'
 
 import { ThemeSwitcher } from '@/components/theme-switcher'
 
@@ -41,11 +41,15 @@ const businessActions = [
     path: 'services',
     icon: HandHelping,
   },
+  {
+    label: 'Customers',
+    path: 'customers',
+    icon: Users,
+  }
 ]
 
 const Sidebar = () => {
   const router = useRouter()
-
   const supabase = createClient()
 
   const setSelectedBusiness = useSetSelectedBusiness()
@@ -62,7 +66,7 @@ const Sidebar = () => {
         console.error('Error fetching businesses:', error)
       } else {
         setBusinesses(data)
-        setSelectedBusiness(data[0]?.name)
+        setSelectedBusiness(data[0].name)
       }
     }
 
