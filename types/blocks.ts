@@ -40,3 +40,21 @@ export type CustomerAddressProps = {
   zip: string
   country: string
 }
+
+// Employees
+
+export type EmployeesProps = {
+  employees: EmployeeProps[]
+}
+
+export type EmployeeProps = {
+  id: number
+  first_name: string
+  last_name: string
+  email: string
+  phone?: string
+  position: string
+  department: string
+  hire_date: string
+  status: string
+}

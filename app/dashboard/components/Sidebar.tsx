@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { ChevronDown, HandHelping, Plus, Users } from 'lucide-react'
+import { ChevronDown, Package, Plus, UserCircle, Users } from 'lucide-react'
 
 import { ThemeSwitcher } from '@/components/theme-switcher'
 
@@ -39,12 +39,17 @@ const businessActions = [
   {
     label: 'Services',
     path: 'services',
-    icon: HandHelping,
+    icon: Package,
   },
   {
     label: 'Customers',
     path: 'customers',
     icon: Users,
+  },
+  {
+    label: 'Employees',
+    path: 'employees',
+    icon: UserCircle,
   }
 ]
 

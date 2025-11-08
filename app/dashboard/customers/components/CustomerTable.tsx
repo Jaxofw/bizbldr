@@ -11,9 +11,9 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import { formatAddress, getInitials } from '@/lib/formatting'
 import { CustomerProps } from '@/types/blocks'
 
-import { formatAddress, getInitials } from '../utils/misc'
 import {
   Empty,
   EmptyDescription,
