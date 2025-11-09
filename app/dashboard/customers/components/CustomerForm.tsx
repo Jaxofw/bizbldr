@@ -18,7 +18,7 @@ const CustomerForm = ({
   onUpdateField,
   onUpdateAddress,
 }: CustomerFormProps) => (
-  <div className="grid gap-6 p-4">
+  <div className="grid gap-6 p-4 max-h-full overflow-y-auto">
     <div className="space-y-4">
       <h3 className="flex items-center gap-2">
         <User className="w-4 h-4" />
