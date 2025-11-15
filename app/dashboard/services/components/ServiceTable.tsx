@@ -57,7 +57,7 @@ const ServiceTable = ({
               <Badge
                 variant={service.status === 'active' ? 'default' : 'secondary'}
               >
-                {service.status}
+                <span className="capitalize">{service.status}</span>
               </Badge>
             </TableCell>
             <TableCell>
