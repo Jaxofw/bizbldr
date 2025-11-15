@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -13,29 +14,51 @@ import { Label } from '@/components/ui/label'
 
 import { createClient } from '@/lib/supabase/client'
 
+import { useSetBusinesses } from '../hooks/state'
+
 const CreateBusinessDialog = () => {
-  const supabase = createClient()
+  const setBusinesses = useSetBusinesses()
 
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value)
-  }
+  const handleOnNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setName(e.target.value)
+    },
+    []
+  )
 
-  const handleOnCreateClick = async () => {
-    setLoading(true)
+  const handleOnCreateClick = useCallback(async () => {
+    const supabase = createClient()
 
-    const { error } = await supabase.from('businesses').insert({ name })
+    const trimmedName = name.trim()
 
-    if (error) {
-      console.error('Error creating business:', error.message)
-    } else {
-      setName('')
+    if (!trimmedName) {
+      toast.error('Business name is required')
+      return
     }
 
-    setLoading(false)
-  }
+    setLoading(true)
+
+    try {
+      const { data, error } = await supabase
+        .from('businesses')
+        .insert({ name: trimmedName })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      setBusinesses((prev) => [...prev, { id: data.id, name: trimmedName }])
+      toast.success('Business created successfully')
+    } catch (error) {
+      console.error('Error creating business:', error)
+      toast.error('Failed to create business')
+    } finally {
+      setLoading(false)
+    }
+  }, [name, setBusinesses])
 
   return (
     <DialogContent>
@@ -49,12 +72,15 @@ const CreateBusinessDialog = () => {
           placeholder="Acme Inc."
           value={name}
           onChange={handleOnNameChange}
+          onKeyDown={(e) =>
+            e.key === 'Enter' && !loading && handleOnCreateClick()
+          }
         />
       </div>
       <Button
         variant="secondary"
         onClick={handleOnCreateClick}
-        disabled={loading}
+        disabled={loading || !name.trim()}
       >
         {loading ? 'Creating...' : 'Create Business'}
       </Button>

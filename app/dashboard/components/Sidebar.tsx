@@ -1,9 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-
 import { ChevronDown, Package, Plus, UserCircle, Users } from 'lucide-react'
 
 import { ThemeSwitcher } from '@/components/theme-switcher'
@@ -29,9 +27,7 @@ import {
 
 import { createClient } from '@/lib/supabase/client'
 
-import { BusinessProps } from '@/types/business'
-
-import { useSetSelectedBusiness } from '../hooks/state'
+import { useBusinessesState, useSetSelectedBusiness } from '../hooks/state'
 
 import CreateBusinessDialog from './CreateBusinessDialog'
 
@@ -50,16 +46,30 @@ const businessActions = [
     label: 'Employees',
     path: 'employees',
     icon: UserCircle,
-  }
+  },
+  {
+    label: 'Jobs',
+    path: 'jobs',
+    icon: Package,
+  },
 ]
 
 const Sidebar = () => {
   const router = useRouter()
   const supabase = createClient()
 
+  const [businesses, setBusinesses] = useBusinessesState()
   const setSelectedBusiness = useSetSelectedBusiness()
 
-  const [businesses, setBusinesses] = useState<BusinessProps[]>([])
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+
+  const handleOnActionSelect = useCallback(
+    (business: string, action: string) => {
+      setSelectedBusiness(business)
+      router.push(`/dashboard/${action}`)
+    },
+    [router, setSelectedBusiness]
+  )
 
   useEffect(() => {
     const fetchBusinesses = async () => {
@@ -69,19 +79,48 @@ const Sidebar = () => {
 
       if (error) {
         console.error('Error fetching businesses:', error)
-      } else {
-        setBusinesses(data)
-        setSelectedBusiness(data[0].name)
+        return
       }
+
+      if (!data) return
+
+      setBusinesses(data)
+      setSelectedBusiness(data[0].name)
     }
 
     fetchBusinesses()
-  }, [supabase, setSelectedBusiness])
+  }, [setBusinesses, setSelectedBusiness, supabase])
 
-  const handleOnActionSelect = (business: string, action: string) => {
-    setSelectedBusiness(business)
-    router.push(`/dashboard/${action}`)
-  }
+  const businessMenuItems = useMemo(
+    () =>
+      businesses.map(({ id, name }) => (
+        <Collapsible key={id} className="group/collapsible">
+          <SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton>
+                <span>{name}</span>
+                <ChevronDown className="transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                {businessActions.map(({ label, path, icon: Icon }) => (
+                  <SidebarMenuSubItem key={`${id}-${label}`}>
+                    <SidebarMenuButton
+                      onClick={() => handleOnActionSelect(name, path)}
+                    >
+                      <Icon size="lg" />
+                      {label}
+                    </SidebarMenuButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </SidebarMenuItem>
+        </Collapsible>
+      )),
+    [businesses, handleOnActionSelect]
+  )
 
   return (
     <ShadcnSidebar>
@@ -91,7 +130,10 @@ const Sidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <Dialog>
+                <Dialog
+                  open={isCreateDialogOpen}
+                  onOpenChange={setIsCreateDialogOpen}
+                >
                   <DialogTrigger asChild>
                     <SidebarMenuButton>
                       <Plus />
@@ -101,32 +143,7 @@ const Sidebar = () => {
                   <CreateBusinessDialog />
                 </Dialog>
               </SidebarMenuItem>
-              {businesses.map(({ id, name }) => (
-                <Collapsible key={id} className="group/collapsible">
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton>
-                        <span>{name}</span>
-                        <ChevronDown className="transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {businessActions.map(({ label, path, icon: Icon }) => (
-                          <SidebarMenuSubItem key={`${id}-${label}`}>
-                            <SidebarMenuButton
-                              onClick={() => handleOnActionSelect(name, path)}
-                            >
-                              <Icon size="lg" />
-                              {label}
-                            </SidebarMenuButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ))}
+              {businessMenuItems}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
