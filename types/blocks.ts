@@ -58,3 +58,19 @@ export type EmployeeProps = {
   hire_date: string
   status: string
 }
+
+export type JobsProps = {
+  jobs: JobProps[]
+}
+
+export type JobProps = {
+  id: number
+  service_id: number
+  status: string
+  priority: string
+  customer_id: number
+  employee_ids: number[]
+  start_date: string
+  end_date: string
+  notes?: string
+}
