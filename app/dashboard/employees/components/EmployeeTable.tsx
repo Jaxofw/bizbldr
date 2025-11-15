@@ -38,7 +38,11 @@ const headers = [
   'Actions',
 ]
 
-const EmployeeTable = ({ employees, onEditClick, onDeleteClick }: EmployeeTableProps) =>
+const EmployeeTable = ({
+  employees,
+  onEditClick,
+  onDeleteClick,
+}: EmployeeTableProps) =>
   employees.length > 0 ? (
     <Table>
       <TableHeader>
@@ -96,7 +100,7 @@ const EmployeeTable = ({ employees, onEditClick, onDeleteClick }: EmployeeTableP
               <Badge
                 variant={employee.status === 'active' ? 'default' : 'secondary'}
               >
-                {employee.status}
+                <span className="capitalize">{employee.status}</span>
               </Badge>
             </TableCell>
             <TableCell>

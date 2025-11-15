@@ -12,30 +12,27 @@ import { EmployeeProps } from '@/types/blocks'
 import { Briefcase, Mail, User } from 'lucide-react'
 
 const POSITIONS = [
-  'Pool Technician',
-  'Senior Pool Technician',
-  'Pool Maintenance Specialist',
-  'Pool Cleaner',
-  'Equipment Repair Technician',
-  'Chemical Treatment Specialist',
-  'Route Manager',
-  'Customer Service Representative',
-  'Sales Representative',
-  'Operations Manager',
-  'Office Administrator',
-  'General Manager',
+  { value: 'none', label: 'Not specified' },
+  { value: 'Technician', label: 'Technician' },
+  { value: 'Manager', label: 'Manager' },
+  { value: 'Supervisor', label: 'Supervisor' },
 ]
 
 const DEPARTMENTS = [
   { value: 'none', label: 'Not specified' },
-  { value: 'Pool Maintenance', label: 'Pool Maintenance' },
-  { value: 'Pool Cleaning', label: 'Pool Cleaning' },
-  { value: 'Equipment Repair', label: 'Equipment Repair' },
-  { value: 'Chemical Treatment', label: 'Chemical Treatment' },
+  { value: 'Operations', label: 'Operations' },
+  { value: 'Field Services', label: 'Field Services' },
   { value: 'Customer Service', label: 'Customer Service' },
   { value: 'Sales', label: 'Sales' },
-  { value: 'Operations', label: 'Operations' },
   { value: 'Administration', label: 'Administration' },
+  { value: 'Management', label: 'Management' },
+  { value: 'Equipment & Maintenance', label: 'Equipment & Maintenance' },
+  { value: 'Quality Control', label: 'Quality Control' },
+]
+
+const STATUSES = [
+  { value: 'active', label: 'Active' },
+  { value: 'inactive', label: 'Inactive' },
 ]
 
 type EmployeeFormProps = EmployeeProps & {
@@ -128,16 +125,16 @@ const EmployeeForm = ({
         <div className="space-y-2">
           <Label htmlFor="position">Position *</Label>
           <Select
-            value={position}
+            value={position || 'none'}
             onValueChange={(value) => onUpdateField('position', value)}
           >
             <SelectTrigger id="position" className="w-full">
               <SelectValue placeholder="Select position" />
             </SelectTrigger>
             <SelectContent>
-              {POSITIONS.map((position) => (
-                <SelectItem key={position} value={position}>
-                  {position}
+              {POSITIONS.map(({ value, label }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -154,9 +151,9 @@ const EmployeeForm = ({
               <SelectValue placeholder="Select department" />
             </SelectTrigger>
             <SelectContent>
-              {DEPARTMENTS.map((dept) => (
-                <SelectItem key={dept.value} value={dept.value}>
-                  {dept.label}
+              {DEPARTMENTS.map(({ value, label }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -179,16 +176,17 @@ const EmployeeForm = ({
           <Label htmlFor="status">Employment Status</Label>
           <Select
             value={status}
-            onValueChange={(value) =>
-              onUpdateField('status', value as 'active' | 'inactive')
-            }
+            onValueChange={(value) => onUpdateField('status', value)}
           >
             <SelectTrigger id="status" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              {STATUSES.map(({ value, label }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
